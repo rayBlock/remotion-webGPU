@@ -1,0 +1,27 @@
+{
+  "name": "webgpu-test",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion render WebGPUScene out/video.mp4",
+    "render": "remotion render WebGPUScene out/video.mp4"
+  },
+  "dependencies": {
+    "@react-three/fiber": "^9.2.0",
+    "@remotion/cli": "^4.0.428",
+    "@remotion/media-utils": "^4.0.428",
+    "@remotion/three": "^4.0.428",
+    "@remotion/zod-types": "^4.0.428",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "^4.0.428",
+    "three": "^0.178.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/three": "^0.178.0",
+    "typescript": "^5.7.0"
+  }
+}

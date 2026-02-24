@@ -1,0 +1,1 @@
+export { hashSeed } from "./hashSeeds";
