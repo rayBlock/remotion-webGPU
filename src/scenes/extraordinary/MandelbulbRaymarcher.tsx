@@ -5,33 +5,31 @@ import {
     uv,
     uniform,
     float,
+    vec3,
+    vec4,
+    normalize,
+    pow,
     sin,
     cos,
-    vec3,
-    pow,
-    sub,
+    abs,
+    remap,
+    step,
+    fract,
     length,
-    normalize,
-    If,
     Fn,
     Break,
+    If,
     log,
     atan,
     acos,
     min,
-    vec4,
-    step,
-    fract,
-    remap
 } from "three/tsl";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 export function MandelbulbRaymarcher() {
     const frame = useCurrentFrame();
     const { fps } = useVideoConfig();
-    const meshRef = useRef<THREE.Mesh>(null);
-
     const { material, timeU } = useMemo(() => {
         const timeU = uniform(float(0));
         const mat = new THREE.MeshBasicNodeMaterial();
@@ -46,7 +44,7 @@ export function MandelbulbRaymarcher() {
             const rd = normalize(vec3(pcoord, 1.0));
 
             const dO = float(0.0).toVar();
-            const power = sin(timeU).mul(2.0).add(6.0); // Animate power 4 to 8
+            const power = sin(timeU).mul(2.0).add(6.0);
 
             const marchSteps = 60;
             const trap = vec4(1000.0).toVar();
@@ -54,7 +52,6 @@ export function MandelbulbRaymarcher() {
             for (let i = 0; i < marchSteps; i++) {
                 const p = ro.add(rd.mul(dO));
 
-                // Rotation
                 const t = timeU.mul(0.2);
                 const rotP = vec3(
                     p.x.mul(cos(t)).sub(p.z.mul(sin(t))),
@@ -62,12 +59,10 @@ export function MandelbulbRaymarcher() {
                     p.x.mul(sin(t)).add(p.z.mul(cos(t)))
                 );
 
-                // Mandelbulb SDF Z^n + C
                 const z = rotP.toVar();
                 const dr = float(1.0).toVar();
                 const r = float(0.0).toVar();
 
-                let escaped = false;
                 for (let j = 0; j < 8; j++) {
                     r.assign(length(z));
                     If(r.greaterThan(2.0), () => Break());
@@ -94,11 +89,9 @@ export function MandelbulbRaymarcher() {
                 dO.addAssign(d);
             }
 
-            // Coloring based on orbit trap and distance
-            const hitMask = step(dO, 10.0); // Did we hit the fractal before max distance?
+            const hitMask = step(dO, 10.0);
             const bg = color("#000000");
 
-            // Neon fractal glowing based on trap
             const trapColor = mix(
                 color("#ff0033"),
                 color("#00ffff"),
@@ -118,7 +111,7 @@ export function MandelbulbRaymarcher() {
     timeU.value = t;
 
     return (
-        <mesh ref={meshRef}>
+        <mesh>
             <boxGeometry args={[40, 40, 40]} />
             <meshBasicMaterial color="#000" />
             <primitive object={material} attach="material" />

@@ -14,15 +14,14 @@ import {
     smoothstep,
     fract,
     instanceIndex,
-    If
+    If,
 } from "three/tsl";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 export function QuantumMorphingSwarm() {
     const frame = useCurrentFrame();
     const { fps } = useVideoConfig();
-    const meshRef = useRef<THREE.InstancedMesh>(null);
     const COUNT = 100000;
 
     const { material, timeU } = useMemo(() => {
@@ -59,15 +58,13 @@ export function QuantumMorphingSwarm() {
             vM.mul(0.5).mul(sin(uM.mul(0.5)))
         ).mul(2.0);
 
-        // Animation logic 
-        // 3 stages, each taking 1/3 of the loop
+        // Animation logic
         const animDist = t.mul(0.5).mod(3.0);
         const isStage1 = step(animDist, 1.0);
         const isStage2 = step(1.0, animDist).mul(step(animDist, 2.0));
         const isStage3 = step(2.0, animDist);
 
         const localT = fract(animDist);
-        // Add a smooth breathing effect to the transition
         const smoothT = smoothstep(0.0, 1.0, smoothstep(0.0, 1.0, localT));
 
         const pos = vec3(0).toVar();
@@ -75,12 +72,10 @@ export function QuantumMorphingSwarm() {
         If(isStage2.greaterThan(0), () => pos.assign(mix(torusPos, moebiusPos, smoothT)));
         If(isStage3.greaterThan(0), () => pos.assign(mix(moebiusPos, spherePos, smoothT)));
 
-        // Add some localized organic noise breathing
         const organicNoise = mx_fractal_noise_vec3(pos.mul(2.0).add(t), 2, float(2.0), float(0.5), float(1.0));
 
         mat.positionNode = positionLocal.add(pos).add(organicNoise.mul(0.1));
 
-        // Colors based on current morph state
         const color1 = color("#00ff88");
         const color2 = color("#ff007f");
         const color3 = color("#00aaff");
@@ -103,14 +98,12 @@ export function QuantumMorphingSwarm() {
     const t = frame / fps;
     timeU.value = t;
 
-    if (meshRef.current) {
-        meshRef.current.rotation.x = t * 0.2;
-        meshRef.current.rotation.y = t * 0.3;
-        meshRef.current.rotation.z = t * 0.1;
-    }
+    const rotX = t * 0.2;
+    const rotY = t * 0.3;
+    const rotZ = t * 0.1;
 
     return (
-        <instancedMesh ref={meshRef} args={[undefined, undefined, COUNT]} material={material}>
+        <instancedMesh rotation={[rotX, rotY, rotZ]} args={[undefined, undefined, COUNT]} material={material}>
             <sphereGeometry args={[0.015, 4, 4]} />
         </instancedMesh>
     );

@@ -1,10 +1,10 @@
 import { Composition } from "remotion";
-import { WebGPUScene } from "./scenes/WebGPUScene";
+import { WebGPUScene } from "./scenes/webgpu";
 import { webGPUSceneSchema, crazyWebGPUSceneSchema, particleForgeSchema } from "./schemas";
-import { ExtraordinaryWebGPUScene } from "./scenes/ExtraordinaryScenes";
-import { CrazyScene } from "./scenes/CrazyScene";
-import { LimitBreaker } from "./scenes/LimitBreaker";
-import { ParticleForge } from "./scenes/ParticleForge";
+import { ExtraordinaryWebGPUScene } from "./scenes/extraordinary";
+import { CrazyScene } from "./scenes/crazy";
+import { LimitBreaker } from "./scenes/limitbreaker";
+import { ParticleForge } from "./scenes/particleforge";
 import { BoidsWebGPUScene } from "./scenes/BoidsScene";
 import { SPHFluidWebGPUScene } from "./scenes/SPHFluidScene";
 
